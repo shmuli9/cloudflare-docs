@@ -31,12 +31,6 @@ const stmt = env.DB.prepare("SELECT * FROM Customers WHERE CompanyName = ?").bin
 
 #### Guidance
 
-- You can pass multiple queries into a single `.prepare()` statement. Simply delineate each query with a semi-colon.
-  - The statement only returns the results of the last query, even though all queries are executed.
-  - You can only bind parameters to the last query.
-	```js
-	const stmt = db.prepare(`SELECT * FROM users WHERE name = "Anthony"; SELECT * FROM users WHERE name = ?1`).bind("Joe")
-	```
 - D1 follows the [SQLite convention](https://www.sqlite.org/lang_expr.html#varparam) for prepared statements parameter binding. Currently, D1 only supports Ordered (`?NNNN`) and Anonymous (`?`) parameters. In the future, D1 will support named parameters as well.
 
 	| Syntax | Type      | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
@@ -62,6 +56,13 @@ const stmt = env.DB.prepare("SELECT * FROM Customers WHERE CompanyName = ?").bin
 	const stmt = db
 		.prepare("SELECT * FROM Customers WHERE CompanyName = ?2 AND CustomerId = ?1")
 		.bind(1, "Alfreds Futterkiste");
+	```
+
+- You can pass multiple queries into a single `.prepare()` statement. Simply delineate each query with a semi-colon.
+  - The statement only returns the results of the last query, even though all queries are executed.
+  - You can only bind parameters to the last query.
+	```js
+	const stmt = db.prepare(`SELECT * FROM users WHERE name = "Anthony"; SELECT * FROM users WHERE name = ?1`).bind("Joe")
 	```
 
 ## Static statements

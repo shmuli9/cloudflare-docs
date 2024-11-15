@@ -1,11 +1,20 @@
 ---
-title: Return object
+title: Return objects
 pcx_content_type: concept
 sidebar:
   order: 3
 ---
 
-The methods `stmt.run()`, `db.exec()`, and `db.batch()` return a typed `D1Result` object for each query statement. This object contains:
+Some D1 Worker Binding APIs return a typed object.
+
+| D1 Worker Binding API     | Return object |
+| ------------------------- | ------------- |
+| `stmt.run()`, `db.batch()`| `D1Result`    |
+| `db.exec()`               | `D1ExecResult`|
+
+## D1Result
+
+The methods `stmt.run()` and `db.batch()` return a typed `D1Result` object for each query statement. This object contains:
 
 - The success status
 - A meta object with the internal duration of the operation in milliseconds
@@ -28,7 +37,7 @@ The methods `stmt.run()`, `db.exec()`, and `db.batch()` return a typed `D1Result
 }
 ```
 
-## Example:
+### Example
 
 ```js
 const someVariable = `Bs Beverages`;
@@ -61,5 +70,32 @@ return Response.json(result)
       "ContactName": "Random Name"
     }
   ]
+}
+```
+
+## D1ExecResult
+
+The method `db.exec()` returns a typed `D1ExecResult` object for each query statement. This object contains:
+
+- The number of executed queries
+- The duration of the operation in milliseconds
+
+```js
+{
+	"count": number, // the number of executed queries
+	"duration": number // the duration of the operation, in milliseconds
+}
+```
+
+### Example
+
+```js
+const returnValue = await env.DB.exec(`SELECT * FROM Customers WHERE CompanyName = "Bs Beverages"`);
+return Response.json(returnValue);
+```
+```js output
+{
+  "count": 1,
+  "duration": 1
 }
 ```

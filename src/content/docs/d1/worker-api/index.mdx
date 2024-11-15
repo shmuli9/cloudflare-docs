@@ -7,7 +7,7 @@ sidebar:
 
 import { DirectoryListing, Details, Steps } from "~/components";
 
-You can execute queries on your D1 database through SQL query statements. To do this, you need to perform the following steps:
+You can execute SQL queries on your D1 database from a Worker using the Worker Binding API. To do this, you can perform the following steps:
 
 1. [Prepare a statement](/d1/worker-api/prepare-a-statement).
 2. [Run the prepared statement](/d1/worker-api/run-a-statement).
@@ -17,9 +17,9 @@ Refer to the relevant sections for the API documentation.
 
 ## Typescript support
 
-D1 Worker Bindings API is fully-typed via the `@cloudflare/workers-types` package, and also supports [generic types](https://www.typescriptlang.org/docs/handbook/2/generics.html#generic-types) as part of its TypeScript API. A generic type allows you to provide an optional _type parameter_ so that a function understands the type of the data it is handling.
+D1 Worker Bindings API is fully-typed via the [`@cloudflare/workers-types`](/workers/languages/typescript/#typescript) package, and also supports [generic types](https://www.typescriptlang.org/docs/handbook/2/generics.html#generic-types) as part of its TypeScript API. A generic type allows you to provide an optional _type parameter_ so that a function understands the type of the data it is handling.
 
-When using the [query statement methods](#query-statement-methods) `stmt.run()`, `stmt.raw()` and `stmt.first()`, you can provide a type representing each database row. D1's API will [return the result object](#return-object) with the correct type.
+When using the [query statement methods](/d1/worker-api/run-a-statement) `stmt.run()`, `stmt.raw()` and `stmt.first()`, you can provide a type representing each database row. D1's API will [return the result object](#return-object) with the correct type.
 
 For example, providing an `OrderRow` type as a type parameter to `stmt.run()` will return a typed `Array<OrderRow>` object instead of the default `Record<string, unknown>` type:
 
@@ -56,40 +56,55 @@ Replace the contents of your `index.js` file with the below to view the effect o
 <Details header="index.js" open={false}>
 ```js
 export default {
-  async fetch(request, env) {
-    const { pathname } = new URL(request.url);
+	async fetch(request, env) {
+	  const { pathname } = new URL(request.url);
 
-    const companyName1 = `Bs Beverages`;
-    const companyName2 = `Around the Horn`;
-    const stmt = env.DB.prepare(`SELECT * FROM Customers WHERE CompanyName = ?`);
+	//   if (pathname === "/api/beverages") {
+	// 	// If you did not use `DB` as your binding name, change it here
+	// 	const { results } = await env.DB.prepare("SELECT * FROM Customers WHERE CompanyName = ?",).bind("Bs Beverages").all();
+	// 	return Response.json(results);
+	//   }
 
-    if (pathname === `/RUN`){
-    const returnValue = await stmt.bind(companyName1).run()
-    return Response.json(returnValue);
+		const companyName1 = `Bs Beverages`;
+		const companyName2 = `Around the Horn`;
+		const stmt = env.DB.prepare(`SELECT * FROM Customers WHERE CompanyName = ?`);
+		const stmtMulti = env.DB.prepare(`SELECT * FROM Customers; SELECT * FROM Customers WHERE CompanyName = ?`);
 
-  } else if (pathname === `/RAW`){
-    const returnValue = await stmt.bind(companyName1).raw();
-    return Response.json(returnValue);
+	  if (pathname === `/RUN`){
+		const returnValue = await stmt.bind(companyName1).run();
+		return Response.json(returnValue);
 
-  } else if (pathname === `/FIRST`){
-    const returnValue = await stmt.bind(companyName1).first();
-    return Response.json(returnValue);
+	} else if (pathname === `/RAW`){
+		const returnValue = await stmt.bind(companyName1).raw();
+		return Response.json(returnValue);
 
-  } else if (pathname === `/BATCH`) {
-    const batchResult = await env.DB.batch([
-      stmt.bind(companyName1),
-      stmt.bind(companyName2)
-    ]);
-    // const returnValue = await stmt.run();
-    return Response.json(batchResult);
-  }
+	} else if (pathname === `/FIRST`){
+		const returnValue = await stmt.bind(companyName1).first();
+		return Response.json(returnValue);
 
-    return new Response(
-    `Welcome to the D1 API Playground!
-		\nChange the URL to test the methods inside your index.js file.`,
-    );
-  },
-  };
+	} else if (pathname === `/BATCH`) {
+		const batchResult = await env.DB.batch([
+			stmt.bind(companyName1),
+			stmt.bind(companyName2)
+		]);
+		// const returnValue = await stmt.run();
+		return Response.json(batchResult);
+
+	} else if (pathname === `/RUNMULTI`){
+		const returnValue = await stmtMulti.bind(companyName1).run();
+		return Response.json(returnValue);
+
+	} else if (pathname === `/EXEC`){
+		const returnValue = await env.DB.exec(`SELECT * FROM Customers WHERE CompanyName = "Bs Beverages"`);
+		return Response.json(returnValue);
+	}
+
+	  return new Response(
+		`Welcome to the D1 API Playground!
+		\nChange the URL to test the various methods inside your index.js file.`,
+	  );
+	},
+};
 
 ```
 </Details>

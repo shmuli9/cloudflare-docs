@@ -27,7 +27,7 @@ const returnValue = await stmt.run();
 
 - <code>D1Result</code>: <Type text="Object"/>
   - An object containing the success status, a meta object, and an array of objects containing the query results.
-  - For more information on the object, refer to [`D1Result`](/d1/worker-api/return-object/d1result).
+  - For more information on the object, refer to [`D1Result`](/d1/worker-api/return-object/#d1result).
 
 <Details header="Example of return values" open = {false}>
 ```js
@@ -295,7 +295,7 @@ const batchResult = await env.DB.batch([
 
 - <code>results</code>: <Type text="Array"/>
   - An array of `D1Result` objects containing the results of the `.db.prepare()` statements. Each object is in the array position corresponding to the array position of the initial `db.prepare()` statement within the `statementArray`.
-  - Refer to [`D1Result`](/d1/worker-api/return-object/d1result) for more information about this object.
+  - Refer to [`D1Result`](/d1/worker-api/return-object/#d1result) for more information about this object.
 
 <Details header="Example of return values" open={false}>
 

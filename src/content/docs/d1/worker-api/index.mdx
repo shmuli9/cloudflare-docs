@@ -68,7 +68,6 @@ export default {
 		const companyName1 = `Bs Beverages`;
 		const companyName2 = `Around the Horn`;
 		const stmt = env.DB.prepare(`SELECT * FROM Customers WHERE CompanyName = ?`);
-		const stmtMulti = env.DB.prepare(`SELECT * FROM Customers; SELECT * FROM Customers WHERE CompanyName = ?`);
 
 	  if (pathname === `/RUN`){
 		const returnValue = await stmt.bind(companyName1).run();
@@ -87,12 +86,7 @@ export default {
 			stmt.bind(companyName1),
 			stmt.bind(companyName2)
 		]);
-		// const returnValue = await stmt.run();
 		return Response.json(batchResult);
-
-	} else if (pathname === `/RUNMULTI`){
-		const returnValue = await stmtMulti.bind(companyName1).run();
-		return Response.json(returnValue);
 
 	} else if (pathname === `/EXEC`){
 		const returnValue = await env.DB.exec(`SELECT * FROM Customers WHERE CompanyName = "Bs Beverages"`);

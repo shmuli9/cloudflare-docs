@@ -58,13 +58,6 @@ const stmt = env.DB.prepare("SELECT * FROM Customers WHERE CompanyName = ?").bin
 		.bind(1, "Alfreds Futterkiste");
 	```
 
-- You can pass multiple queries into a single `.prepare()` statement. Simply delineate each query with a semi-colon.
-  - The statement only returns the results of the last query, even though all queries are executed.
-  - You can only bind parameters to the last query.
-	```js
-	const stmt = db.prepare(`SELECT * FROM users WHERE name = "Anthony"; SELECT * FROM users WHERE name = ?1`).bind("Joe")
-	```
-
 ## Static statements
 
 D1 API supports static statements. Static statements are SQL statements where the variables have been hard coded. When writing a static statement, you manually type the variable within the statement string.

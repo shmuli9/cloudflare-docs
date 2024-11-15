@@ -25,7 +25,7 @@ The first decision for a Magic WAN Connector deployment is its location in the n
 
   1. The transition from MPLS to Internet-based connectivity, where the MPLS router probably does not add any value in the deployment.
   2. An Internet-facing CPE reaching, or already having exceeded, its end of life.
-  3. An internet-facing CPE that is redundant with Magic WAN Connector and can be removed for simplicity’s sake.
+  3. An Internet-facing CPE that is redundant with Magic WAN Connector and can be removed for simplicity's sake.
 
 - **Connector north of the CPE** (Figure 1b) \- This option might be preferred when the existing CPE is a firewall, and the organization wants to keep it for:
 
@@ -34,7 +34,7 @@ The first decision for a Magic WAN Connector deployment is its location in the n
 
 - **Connector south of the CPE** (Figure 1c) \- Reasons for installing Magic WAN Connector south of an existing Internet-facing CPE might be:
   1. CPE cannot be replaced because it connects to a broadband service with a presentation (for example RJ-11) or protocol (for example PPPoE) that Magic WAN Connector does not support
-  2. CPE cannot be replaced because it is part of a fiber service that only works with that specific hardware (e.g. ISP-provided ONT)
+  2. CPE cannot be replaced because it is part of a fiber service that only works with that specific hardware, such as an ISP-provided ONT (Optical Network Terminal).
   3. CPE cannot be replaced (yet) because it is part of an active managed service
   4. CPE cannot be replaced because it is a firewall that the organization wants to keep in place for other reasons (technical or contractual)
 
@@ -76,16 +76,16 @@ The main use case for this type of deployment is based on the fact that many org
 This type of hybrid architecture requires the MPLS Customer Edge router (CE) or some other L3 device in the LAN to route traffic via different interfaces depending on the destination. Traffic flows in this scenario as follows:
 
 1. Devices on the local network use the MPLS CE (or some other local L3 device) as their default gateway
-2. Private traffic is sent towards the MPLS network (e.g. MPLS CE knows how to route these as it receives RFC1918 ranges via BGP from the MPLS network)
+2. Private traffic is sent towards the MPLS network. For example, the MPLS CE knows how to route these because it receives RFC1918 ranges via BGP from the MPLS network.
 3. Internet traffic from both LAN and MPLS network is sent towards the Magic WAN Connector (MPLS CE/L3 gateway points a static default route towards the Connector)
 
-All traffic towards internal locations and self-hosted applications follows the MPLS path, while traffic to cloud-based and SaaS applications follows the local internet breakout path, protected by Cloudflare security services.
+All traffic towards internal locations and self-hosted applications follows the MPLS path, while traffic to cloud-based and SaaS applications follows the local Internet breakout path, protected by Cloudflare security services.
 
 ### Split tunneling
 
-In some deployments, customers might want to protect only specific protocols using Cloudflare security services such as our [secure web gateway](https://developers.cloudflare.com/cloudflare-one/policies/gateway/), the rest of the traffic routes through the existing edge device (router or firewall). Figure 5 illustrates such a use case.
+In some deployments, customers might want to protect only specific protocols using Cloudflare security services such as our [secure web gateway](/cloudflare-one/policies/gateway/), the rest of the traffic routes through the existing edge device (router or firewall). Figure 5 illustrates such a use case.
 
-![Figure 5. ‘Split Tunneling’ use case.](~/assets/images/reference-architecture/magic-wan-connector-deployment/figure05.svg "Figure 5. ‘Split Tunneling’ use case.")
+![Figure 5. 'Split Tunneling' use case.](~/assets/images/reference-architecture/magic-wan-connector-deployment/figure05.svg "Figure 5. 'Split Tunneling' use case.")
 
 In this example, the organization wants Cloudflare to protect all Internet web traffic (HTTP/HTTPS), while the rest of the traffic flows out via the existing firewall. The latter could be traffic towards existing VPNs, or non-web traffic exiting the site, but protected by the on-prem firewall. This method could take the advantage of local device policy-based routing (PBR) capabilities, for example:
 
@@ -94,22 +94,22 @@ In this example, the organization wants Cloudflare to protect all Internet web t
 3. Web traffic (TCP 80/443) is sent towards Cloudflare via the Magic WAN Connector
 4. All other traffic exits via the on premises firewall
 
-As long as PBR capability exists locally, and the ISP provides at least two public IP addresses to the organization, the possibilities of splitting traffic towards the Magic WAN Connector are endless, and really depend on each organization’s unique environment and use cases.
+As long as PBR capability exists locally, and the ISP provides at least two public IP addresses to the organization, the possibilities of splitting traffic towards the Magic WAN Connector are endless, and really depend on each organization's unique environment and use cases.
 
 ### Protecting segments / segmentation
 
-Another advanced group of use cases that Magic WAN Connector can support is local segmentation, and protection of specific local networks. To achieve that, and depending on an organization’s current architecture, line of business, security policies, and compliance requirements, Magic WAN Connector can be installed in any location south of the site edge device to provide more granular network security, as illustrated in figure 6 and described in the following paragraphs.
+Another advanced group of use cases that Magic WAN Connector can support is local segmentation, and protection of specific local networks. To achieve that, and depending on an organization's current architecture, line of business, security policies, and compliance requirements, Magic WAN Connector can be installed in any location south of the site edge device to provide more granular network security, as illustrated in figure 6 and described in the following paragraphs.
 
 ![Figure 6. Segmentation-related use cases.](~/assets/images/reference-architecture/magic-wan-connector-deployment/figure06.svg "Figure 6. Segmentation-related use cases.")
 
 In this example, the Magic WAN Connector will create an IPsec tunnel to Cloudflare through the on premises firewall and local Internet connection. Subnet A and B are both connected to the Magic WAN Connector, but have no direct connection with each other. This will enable a couple of use cases:
 
 1. **Internet security**: Segment 1 adheres to Cloudflare security policies, bypassing the local firewall policy.
-2. **Site-to-site connectivity**: Segment 1 can connect to local segments in other locations (or entire sites, for example Site 2), depending on the organization’s policy.
+2. **Site-to-site connectivity**: Segment 1 can connect to local segments in other locations (or entire sites, for example Site 2), depending on the organization's policy.
 
 The example also shows how Magic WAN Connector can be used to provide two types of local network segmentation:
 
-1. **Intra-segment**: Traffic between LAN ports on the same Connector is blocked by default, hence, Subnet A and Subnet B in Segment 1 cannot talk to each other. The administrator would have to explicitly allow this traffic flow by using configuration logic similar to IP access lists. This ability to hairpin local traffic via the Connector’s LAN ports, avoids traffic tromboning via the Cloudflare platform (that is, travel out and back in via the Magic WAN tunnel), which could result in those segments losing connectivity to each other in the event of Internet circuit outage. Therefore, this capability allows local nodes that do not necessarily require Internet access to function, for example printers, file servers, network attached storage (NAS) nodes, and various Internet of Things (IoT) devices, to continue being accessible by local hosts in different segments during Internet outages.
+1. **Intra-segment**: Traffic between LAN ports on the same Connector is blocked by default, hence, Subnet A and Subnet B in Segment 1 cannot talk to each other. The administrator would have to explicitly allow this traffic flow by using configuration logic similar to IP access lists. This ability to hairpin local traffic via the Connector's LAN ports, avoids traffic tromboning via the Cloudflare platform (that is, travel out and back in via the Magic WAN tunnel), which could result in those segments losing connectivity to each other in the event of Internet circuit outage. Therefore, this capability allows local nodes that do not necessarily require Internet access to function, for example printers, file servers, network attached storage (NAS) nodes, and various Internet of Things (IoT) devices, to continue being accessible by local hosts in different segments during Internet outages.
 2. **Inter-segment**: Magic WAN Connector does not allow any inbound traffic on its WAN ports. Therefore, Segments 1 and 2 cannot talk to each other.
 
 To summarize, Magic WAN Connector is a Zero-Touch Provisioning ([ZTP](https://en.wikipedia.org/wiki/Zero-touch_provisioning)) device that organizations can use to connect to Cloudflare and consume advanced security and connectivity services, while keeping operational costs low.
@@ -117,5 +117,5 @@ To summarize, Magic WAN Connector is a Zero-Touch Provisioning ([ZTP](https://en
 ## Related Resources
 
 - [https://blog.cloudflare.com/magic-wan-connector/](https://blog.cloudflare.com/magic-wan-connector/)
-- [https://developers.cloudflare.com/magic-wan/configuration/connector/](https://developers.cloudflare.com/magic-wan/configuration/connector/)
+- [/magic-wan/configuration/connector/](/magic-wan/configuration/connector/)
 - [https://www.cloudflare.com/en-gb/network-services/products/magic-wan/](https://www.cloudflare.com/en-gb/network-services/products/magic-wan/)

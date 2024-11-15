@@ -104,7 +104,7 @@ cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=clie
 
 Follow the steps outlined in the [developer documentation](/cloudflare-one/identity/devices/access-integrations/mutual-tls-authentication/#add-mtls-authentication-to-your-access-configuration).
 
-Using the example from Step 2: upload the **\`ca.pem\`** to your Cloudflare Access account via the [Dashboard](/cloudflare-one/identity/devices/access-integrations/mutual-tls-authentication/#add-mtls-authentication-to-your-access-configuration) or [Cloudflare API](/api/operations/access-mtls-authentication-add-an-mtls-certificate).
+Using the example from Step 2: upload the `ca.pem` to your Cloudflare Access account via the [Dashboard](/cloudflare-one/identity/devices/access-integrations/mutual-tls-authentication/#add-mtls-authentication-to-your-access-configuration) or [Cloudflare API](/api/operations/access-mtls-authentication-add-an-mtls-certificate).
 
 Do not forget to enter the fully-qualified domain names (FQDN / associated hostnames) that will use this CA certificate.
 
@@ -116,7 +116,7 @@ Additionally, authenticated requests also send the `Cf-Access-Jwt-Assertion\` JW
 
 Finally, the hostname you want to protect with mTLS needs to be added as a [self-hosted app](/cloudflare-one/applications/configure-apps/self-hosted-apps/) in Cloudflare Access, defining an [Access Policy](/cloudflare-one/policies/access/) which uses the action [Service Auth](/cloudflare-one/policies/access/#service-auth) and the Selector *“Valid Certificate”*, or simply requiring an [IdP](/cloudflare-one/identity/idp-integration/) authentication. You can also take advantage of extra requirements, such as the “Common Name” (CN), which expects the indicated hostname, and more [Selectors](/cloudflare-one/policies/access/#selectors). Alternatively, one can also [extend ZTNA with external authorization and serverless computing](/reference-architecture/diagrams/sase/augment-access-with-serverless/).
 
-## Usage
+## Demo
 
 :::note
 Make sure that you are not using any VPN that could interfere with the certificates or TLS decryption.

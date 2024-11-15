@@ -69,7 +69,7 @@ return Response.json(returnValue);
 
 #### Guidance
 
-- `results` is empty for write operations such as UPDATE, DELETE, or INSERT.
+- `results` is empty for write operations such as `UPDATE`, `DELETE`, or `INSERT`.
 - When using TypeScript, you can pass a [type parameter](/d1/build-with-d1/d1-client-api/#typescript-support) to `run()` to return a typed result object.
 - `stmt.run()` is functionally equivalent to `stmt.all()`, and can be treated as an alias.
 - You can choose to extract only the results you expect from the statement by simply returning the `results` property of the return object.
